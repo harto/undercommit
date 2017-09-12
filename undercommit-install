@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Configure a place for custom hooks to be installed alongside Overcommit hooks
+# (https://github.com/brigade/overcommit). This is useful if you wish to install
+# hooks that are specific to your environment, e.g. regenerating editor-specific
+# ctags on post-checkout.
+#
+# After running this script:
+#
+# - Overcommit hooks are renamed to .git/hooks/{hook}-overcommit.
+# - Custom hooks can be installed as .git/hooks/{hook}-custom.
+# - Hooks in .git/hooks call Overcommit hooks, then custom hooks, if they exist.
+#
+# Hooks that aren't managed by Overcommit are ignored.
+
+if [[ ! -d .git ]]; then
+  echo "no git repo found in $(pwd)" >&2
+  exit 1
+fi
+
+# ruby -r overcommit -e 'puts Overcommit::Utils.supported_hook_types.join("\n")'
+OVERCOMMIT_HOOKS="
+commit-msg
+post-checkout
+post-commit
+post-merge
+post-rewrite
+pre-commit
+pre-push
+pre-rebase
+"
+
+HERE=$(cd "$(dirname $0)"; pwd -P)
+
+cd .git/hooks
+cp "$HERE/master-hook" undercommit-hook
+
+for hook in $OVERCOMMIT_HOOKS; do
+  if ! grep -q OVERCOMMIT $hook; then
+    echo "$hook doesn't look like an Overcommit hook; aborting"
+    exit 1
+  fi
+  mv "$hook" "${hook}-overcommit"
+  echo "Moved $hook -> ${hook}-overcommit" >&2
+  ln -s undercommit-hook "$hook"
+  echo "Install custom hook at ${hook}-custom." >&2
+done

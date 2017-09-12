@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Executes Overcommit and custom hooks, preserving the invariant that files are
+# named after hooks:
+#
+# - moves this file out of the way
+# - moves Overcommit hook into canonical location, and executes it
+# - moves custom hook into canonical location, and executes it
+# - restores this file to its original place
+
+# The following line protects against clobbering by `overcommit --install`:
+#
+# OVERCOMMIT_DISABLE
+
+SELF=$0
+BACKUP="/tmp/$(basename $SELF).$$"
+
+mv $SELF $BACKUP
+restore_self() {
+  mv $BACKUP $SELF
+}
+trap restore_self EXIT
+
+call_as_self() {
+  local hook=$1; shift
+  if [[ ! -x $hook ]]; then
+    return
+  fi
+  cp $hook $SELF
+  $SELF "$@"
+  ret=$?
+  if (( $ret != 0 )); then
+    exit $ret
+  fi
+}
+
+call_as_self "${SELF}-overcommit"
+call_as_self "${SELF}-custom"

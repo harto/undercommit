@@ -35,5 +35,5 @@ call_as_self() {
   fi
 }
 
-call_as_self "${SELF}-overcommit"
-call_as_self "${SELF}-custom"
+call_as_self "${SELF}-overcommit" "$@"
+call_as_self "${SELF}-custom" "$@"

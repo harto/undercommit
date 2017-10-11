@@ -9,10 +9,6 @@ set -euo pipefail
 # - moves custom hook into canonical location, and executes it
 # - restores this file to its original place
 
-# The following line protects against clobbering by `overcommit --install`:
-#
-# OVERCOMMIT_DISABLE
-
 SELF=$0
 BACKUP="/tmp/$(basename $SELF).$$"
 

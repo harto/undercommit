@@ -4,6 +4,11 @@ Jam custom, unversioned hooks into a Git repo with existing hooks managed by
 [Overcommit][overcommit].
 
 
+## Note
+
+There's a less hacky way to do this! See https://github.com/brigade/overcommit/issues/527.
+
+
 ## Overview
 
 Overcommit is a nice tool for managing Git hooks that assumes complete control

@@ -6,7 +6,8 @@ Jam custom, unversioned hooks into a Git repo with existing hooks managed by
 
 ## Note
 
-There's a less hacky way to do this! See https://github.com/brigade/overcommit/issues/527.
+There's a less hacky way to do this! See
+https://github.com/brigade/overcommit/issues/527#issuecomment-362355888.
 
 
 ## Overview
